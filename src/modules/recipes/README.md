@@ -9,17 +9,29 @@ Module này được thiết kế theo kiến trúc **Hexagonal (Ports and Adapt
 ```text
 src/modules/recipes/
 ├── domain/                          # Core Domain (Nghiệp vụ thuần túy, KHÔNG phụ thuộc NestJS hay DB)
-│   ├── entities/                    # Thực thể Domain (chứa business logic & validation)
+│   ├── entities/                    # Thực thể Recipe
 │   │   └── recipe.entity.ts
-│   └── exceptions/                  # Domain errors/exceptions
-│       └── recipe-not-found.exception.ts
+│   ├── exceptions/                  # Domain errors/exceptions của Recipe
+│   │   └── recipe-not-found.exception.ts
+│   └── user/                        # Subfolder nghiệp vụ User trong domain
+│       ├── entities/
+│       │   ├── user.entity.ts       # Thực thể User (avatar, soft delete, role, v.v.)
+│       │   └── user.entity.spec.ts  # Unit tests cho User Domain
+│       ├── enums/
+│       │   ├── user-role.enum.ts    # UserRole (USER, CHEF, MODERATOR, ADMIN)
+│       │   └── user-status.enum.ts  # UserStatus (ACTIVE, INACTIVE, BANNED, DELETED)
+│       └── exceptions/
+│           ├── invalid-user-data.exception.ts
+│           └── user-not-found.exception.ts
 │
 ├── ports/                           # Hợp đồng giao tiếp (Interfaces / Contracts)
 │   ├── in/                          # Inbound Ports (Driving): Các use case được gọi từ bên ngoài
 │   │   ├── create-recipe.use-case.ts
 │   │   └── get-recipe.use-case.ts
 │   └── out/                         # Outbound Ports (Driven): Các cổng ra ngoài (DB, Notification, v.v.)
-│       └── recipe-repository.port.ts
+│       ├── recipe-repository.port.ts
+│       └── user/                    # Outbound Port cho User
+│           └── user-repository.port.ts
 │
 ├── application/                     # Application Layer (Orchestration & Use Case Services)
 │   ├── recipe.service.ts            # Triển khai các Inbound Ports, gọi Outbound Ports
